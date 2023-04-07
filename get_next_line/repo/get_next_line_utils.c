@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/07 12:03:22 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/07 13:47:14 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,21 @@ char	*process_stash(char **stash, int *return_flag)
 	char	*segment;
 
 	i = 0;
-	eol = 0;
+	eol = 1;
 	while (stash[i] != 0)
 		i++;
 	if (i == 0)
 		return (NULL);
 	while (stash[eol] != '\n' && eol < i)
 		eol ++;
-	segment = create_line(*stash, "\0", 0, eol);
-	order_stash(stash, *stash, eol);
+	if (eol > i)
+		segment = create_line(*stash, "\0", 0, i);
+	else 
+	{
+		segment = create_line(*stash, "\0", 0, eol);
+		return_flag = 1;
+	}
+	order_stash(stash, *stash, eol, i );
 	return (segment);
 }
 
@@ -77,7 +83,7 @@ char	*process_read(int fd, char **stash, int *return_flag)
 		return_flag = -1;
 		return (NULL);
 	}
-	if (read_bytes = 0)
+	if (read_bytes == 0)
 	{	
 		return_flag = -2;
 		return (NULL);
@@ -86,12 +92,15 @@ char	*process_read(int fd, char **stash, int *return_flag)
 }
 
 /*
+	Copies nb_bytes of bytes from src to the end of dst.
 	Creates the return values of process_stash and process_read.
 	Creates next_line from the return values of process_stash and process_read.
 	Also handles the return_flag.
+	If used for process_stash or process_read,dst == "\0".
+	If used to create next_line, dst == next_line. 
 */
 
-char	*create_line(char *src, char *dst, int nb_bytes)
+char	*create_line(char *src, char *dst, int index, int nb_bytes)
 {
 	
 }
