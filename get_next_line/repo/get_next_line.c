@@ -42,9 +42,32 @@ Side functions :
 		shifts every character from the n'th + 1 to n bytes to the right. Sets the n last bytes to 0.
 */
 
+
+// créer une fonction de return, pour allouer l'espace pour la ligne retournée. Aussi, penser à free les variables allouées. 
+//Au pire, joindre process_stash et process_read en une seule fonction. (cette fonction pourrait retourner la ligne next_line complète, ou NULL si erreur/rien à lire)
 char	*get_next_line(int fd)
 {
-	int			*return_flag;
-
-	return_flag = 0; n
+	int		*return_flag;
+	char		*next_line;
+	char		*tmp;
+	static char	*stash;
+	
+	return_flag = ft_calloc(1, sizeof(int));
+	*return_flag = -1;
+	if (stash == NULL)
+		stash = ft_calloc(BUFFER_SIZE, sizeof(char)); //will this work ? Does stash defaults to NULL ?
+	while (*return_flag == -1)	//return_flag will remain 0 as long as stash is not emptied.
+	{
+		tmp = process_stash(&stash, return_flag); //&stash || stash ?
+		next_line = construct_line(next_line, tmp);
+		stash = order_stash(stash);  // Will this work ? Should it be &stash = order_stash ?
+	}
+	while (return_flag == 0)
+	{
+		tmp = process_read(fd, return_flag, &stash);	
+		if (return_flag == -1)
+			return(NULL);
+		next_line = construct_line(next_line, tmp);
+	}
+	return (next_line);
 }
