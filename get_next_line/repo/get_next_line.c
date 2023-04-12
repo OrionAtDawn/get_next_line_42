@@ -6,68 +6,79 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:47:16 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/07 11:49:25 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/12 15:38:10 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-/* 'return_signal' :
-if 0  -> continue
-if 1  -> return 'next_line'
-if -1 -> return NULL (error)
-if -2 -> nothing to read (if next_line is empty, return -1, else return next_line)
-*/
-
 /*
-1 : Process stash. 
-If it is empty, return NULL and set return_value to 0.
-If it contains a \n, return the content until \n (included) is found. Set return value to 1. If there is something after the \n, order the stash. Else reset it. 
-If it did not contain an eol, return the whole content of the stash and set return value to 0.
-
-2 : Process read.
-Call read. (read_bytes = read(fd, read_line, BUFFER_SIZE))
-If read returns 0, verify that next_line is empty. If not, return 1. Else return -1.
-If read returns -1, return -1.
-**the end of read_line is not BUFFER_SIZE. It's read_bytes.
-If read returns > 0 and contains an eol, move it's content up to the oel into next_line(read_line[0] - read_line[i]). 
- Store the rest in the stash(read_line[i] - read_line[read_bytes]), and return 1.
-If it does not contain an eol, move it's content to next_line (read_line[0]-read_line[read_bytes]) and call the function process_read again.
-
-Side functions : 
-	cat_line(char **src, char **dst, int index, int n) : 
-		Copies n bytes from src[index] to the end of dst.
-	
-	order_stash(char **stash, int n) :
-		shifts every character from the n'th + 1 to n bytes to the right. Sets the n last bytes to 0.
+Review rules on allocation. In which instances should you allocate memory ?
+Make sure strings end with a "\0"
+Free allocated variables
 */
 
+char	*ft_calloc(size_t count, size_t size)
+{
+	char	*ptr;
+	size_t	i;
 
-// créer une fonction de return, pour allouer l'espace pour la ligne retournée. Aussi, penser à free les variables allouées. 
-//Au pire, joindre process_stash et process_read en une seule fonction. (cette fonction pourrait retourner la ligne next_line complète, ou NULL si erreur/rien à lire)
+	ptr = malloc(count * size);
+	if (!ptr)
+		return (NULL);
+	i = 0;
+	while (i < count * size)
+	{
+		ptr[i] = 0;
+		i++;
+	}
+	return (ptr);
+}
+
+char	*create_line(char *src, char *dst, char **adress_stash)
+{
+	//returns the content up to a '\n' or the end of dst. (How will you know it's the end ? '\0' ?)
+	// if a '\n' was found, keeps what's left after in stash.
+}
+
+char	*process_read(int fd, char *base, char **adress_stash)
+{
+	char	*next_line;
+	char	*tmp;
+	int		read_bytes;
+	int		line_lenght;
+
+	next_line = base;			//make sure this works
+	line_lenght = 0;
+	read_bytes = read(fd, tmp, BUFFER_SIZE);
+	if (read_bytes == -1 || (read_bytes == 0 && next_line[0] == 0))
+		return (NULL);
+	next_line = create_line(next_line, tmp, adress_stash);
+	while (next_line[line_lenght])
+		line_lenght++;
+	if (next_line[line_lenght] != '\n')
+		next_line = process_read(fd, next_line, adress_stash);
+	return(next_line);
+}
+
 char	*get_next_line(int fd)
 {
-	int		*return_flag;
 	char		*next_line;
-	char		*tmp;
-	static char	*stash;
-	
-	return_flag = ft_calloc(1, sizeof(int));
-	*return_flag = -1;
+	static char	*stash;				
+	char		*return_line;
+	int			line_lenght;
+
+	line_lenght = 0;
 	if (stash == NULL)
-		stash = ft_calloc(BUFFER_SIZE, sizeof(char)); //will this work ? Does stash defaults to NULL ?
-	while (*return_flag == -1)	//return_flag will remain 0 as long as stash is not emptied.
-	{
-		tmp = process_stash(&stash, return_flag); //&stash || stash ?
-		next_line = construct_line(next_line, tmp);
-		stash = order_stash(stash);  // Will this work ? Should it be &stash = order_stash ?
-	}
-	while (return_flag == 0)
-	{
-		tmp = process_read(fd, return_flag, &stash);	
-		if (return_flag == -1)
-			return(NULL);
-		next_line = construct_line(next_line, tmp);
-	}
-	return (next_line);
+		stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	next_line = create_line("\0", stash, &stash);
+	while (next_line[line_lenght])
+		line_lenght++;
+	if (next_line[line_lenght] != '\n')
+		next_line = process_read(fd, next_line, &stash);
+	while(next_line[line_lenght])
+		line_lenght++;
+	return_line = ft_calloc(line_lenght, sizeof(char));
+	return_line = next_line;
+	return(next_line);
 }
