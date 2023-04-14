@@ -1,8 +1,0 @@
-Static variables :
-	Variables which retain their value through every function call.
-	So, if a static variable is declared in a function and said function is called
-	multiple times, the variable won't lose it's value between calls.
-	(what happens if said variable is passed to another function ?)
-
-Buffer :
-	?????
