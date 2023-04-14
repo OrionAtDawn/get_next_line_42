@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/14 14:32:21 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/14 15:09:10 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,16 @@ char	*get_next_line(int fd)
 	return_line = ft_calloc(line_lenght, sizeof(char));
 	return_line = next_line;
 	return (return_line);
+}
+#include <fcntl.h>
+#include <stdio.h>
+
+int main()
+{	
+	int fd;
+	char *line;
+	
+	fd = open ("text.txt", O_RDONLY);
+	line = get_next_line(fd);
+	printf("%s", line);
 }

@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 14:04:55 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/13 14:06:51 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/14 14:59:39 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #  define BUFFER_SIZE 42
 # endif
 
+char	*get_next_line(int fd);
 char	*ft_calloc(size_t count, size_t size);
 void	order_stash(char **adress_stash, char *add, int eol);
 char	*create_line(char *src, char *to_add, char **adress_stash);

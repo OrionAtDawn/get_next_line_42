@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/14 14:35:23 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/14 15:09:51 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*create_line(char *src, char *to_add, char **adress_stash)
 	while (to_add[i])
 		i++;
 	while (to_add && to_add[eol] != '\n')
-		eol ++;
+		eol++;
 	if (eol <= i - 1)
 		order_stash(adress_stash, to_add, eol);
 	i = 0;
