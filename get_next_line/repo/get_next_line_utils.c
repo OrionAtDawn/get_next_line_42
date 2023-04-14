@@ -6,18 +6,11 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/07 13:47:14 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/14 14:29:37 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/*Fix : if the end of the file was reached. Manage in read function ? 
-(if read_size < BUFFER_SIZE && read_size > 0)
-Yes.
-And, if read returns 0, verify that next_line is empty. If not, return next_line.
-Else, return NULL*/
-
-//Beware when copying/moving stuff around, not to override something.
 
 char	*ft_calloc(size_t count, size_t size)
 {
@@ -36,82 +29,68 @@ char	*ft_calloc(size_t count, size_t size)
 	return (ptr);
 }
 
-/* Processes the "stash". 
-If "stash" is empty, returns NULL. (if i == 0)
-If "stash" contains a '\n' (eol < i), calls "create_line" to create the segment to return, 
-calls order_stash to re-order itself and sets return_flag to 1.
-If "stash" does not contain a '\n'(if eol == i), calls "move_data" to update "next_line",
-calls order_stash to empty itself and returns 0.
-*/
-char	*process_stash(char **stash, int *return_flag)
+void	order_stash(char **adress_stash, char *add, int eol)
 {
-	int		i;
-	int		eol;
-	char	*segment;
+	int	i;
 
 	i = 0;
-	eol = 1;
-	while (stash[i] != 0)
+	while(add[eol + i])
+	{	
+		*adress_stash[i] = add[eol + i]; 
 		i++;
-	if (i == 0)
-		return (NULL);
-	while (stash[eol] != '\n' && eol < i)
-		eol ++;
-	if (eol > i)
-		segment = create_line(*stash, "\0", 0, i);
-	else 
-	{
-		segment = create_line(*stash, "\0", 0, eol);
-		return_flag = 1;
 	}
-	order_stash(stash, *stash, eol, i );
-	return (segment);
+	while (i <= BUFFER_SIZE)
+	{	
+		*adress_stash[i] = '\0';
+		i++;
+	}
 }
 
-char	*process_read(int fd, char **stash, int *return_flag)
+char	*create_line(char *src, char *to_add, char **adress_stash)
 {
-	int		read_bytes;
-	char	*buff;
-	char	*segment;
-	int		i;
 	int		eol;
+	int		i;
+	int		i_add;
+	char	*line;
 
-	buff = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	read_bytes = read(fd, buff, BUFFER_SIZE);
-	if (read_bytes == -1)
+	eol = 0;
+	i = 0;
+	i_add = 0;
+	line = src;
+	while (to_add[i])
+		i++;
+	while (to_add && to_add[eol] != '\n')
+		eol ++;
+	if (eol <= i - 1)
+		order_stash(adress_stash, to_add, eol);
+	i = 0;
+	while (line[i])
+		i++;
+	while (i_add <= eol)
 	{	
-		return_flag = -1;
-		return (NULL);
+		line[i] = to_add[i_add];
+		i++;
+		i_add++;
 	}
-	if (read_bytes == 0)
-	{	
-		return_flag = -2;
+	return (line);
+}
+
+char	*process_read(int fd, char *base, char **adress_stash)
+{
+	char	*next_line;
+	char	*tmp;
+	int		read_bytes;
+	int		line_lenght;
+
+	next_line = base;
+	line_lenght = 0;
+	read_bytes = read(fd, tmp, BUFFER_SIZE);
+	if (read_bytes == -1 || (read_bytes == 0 && next_line[0] == 0))
 		return (NULL);
-	}
-	while (buff <)
+	next_line = create_line(next_line, tmp, adress_stash);
+	while (next_line[line_lenght])
+		line_lenght++;
+	if (next_line[line_lenght] != '\n')
+		next_line = process_read(fd, next_line, adress_stash);
+	return (next_line);
 }
-
-/*
-	Copies nb_bytes of bytes from src to the end of dst.
-	Creates the return values of process_stash and process_read.
-	Creates next_line from the return values of process_stash and process_read.
-	Also handles the return_flag.
-	If used for process_stash or process_read,dst == "\0".
-	If used to create next_line, dst == next_line. 
-*/
-
-char	*create_line(char *src, char *dst, int index, int nb_bytes)
-{
-	
-}
-
-/*
-sets the stash to 0.
-Copies content from i_start to i_end in stash. 
-*/
-void	order_stash(char **stash, char *content, int i_start, int i_end)
-{
-
-}
-
-
