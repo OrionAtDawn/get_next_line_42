@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/21 15:31:05 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/21 15:34:14 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,11 +148,12 @@ char	*get_next_line(int fd)
 	return (next_line);
 }
 
+//##################DELETE :####################
 #include <fcntl.h>
 #include <stdio.h>
-
 int main()
 {
+//norminette !
 	int	fd;
 	fd = open("text.txt", O_RDONLY);
 	printf("%s", get_next_line(fd));
