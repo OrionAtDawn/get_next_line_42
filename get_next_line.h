@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 14:04:55 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/25 09:56:54 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/26 11:23:13 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,13 @@
 #  define BUFFER_SIZE 42
 # endif
 
-typedef struct strings
-{
-	char	*stash;
-	char	*next_line;
-}		strings;
-
-# define FLAG_ERROR -1
-# define FLAG_CONTINUE 0
-# define FLAG_RETURN 1
+char	**get_stash(void);
+char	*make_line(char *base, char *add, int start, int stop);
+char	*process_read(int fd, char *next_line, char	**stash);
+char	*get_next_line(int fd);
+int		ft_strlen(const char *s);
+int		ft_strchr(char *str, char search);
+char	*safe_return(char *return_str, char **free_stash, char *free_line);
+void	*ft_calloc(int nb, int size);
 
 #endif
