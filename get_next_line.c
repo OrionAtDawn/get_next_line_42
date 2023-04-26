@@ -6,12 +6,13 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/26 11:50:58 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/26 15:19:07 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+// ! Need to make char	*stash work within char	**stash. For now, only char	**stash is allocated.
 #include "get_next_line.h"
-
+#include <stdio.h> //#
 //returns the adress of a pointer to stash. Allocates stash when first called.
 char	**get_stash(void)
 {
@@ -90,7 +91,8 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	stash = get_stash();
-	if (stash == NULL)
+	*stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (stash == NULL || *stash == NULL)
 		return (NULL);
 	next_line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	return (process_read(fd, next_line, stash));
