@@ -6,25 +6,26 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/26 15:19:07 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/27 15:03:41 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// ! Need to make char	*stash work within char	**stash. For now, only char	**stash is allocated.
 #include "get_next_line.h"
-#include <stdio.h> //#
 //returns the adress of a pointer to stash. Allocates stash when first called.
 char	**get_stash(void)
 {
 	static char	**stash;
 
 	if (stash == NULL)
+	{
 		stash = ft_calloc(1, sizeof(char *));
+		*stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	}
 	return (stash);
 }
 
-//Allocates sufficient space for a copy of 'add[start]' - 'add[stop]' 
-//appended at the end of 'base'. Frees 'base' and 'add', and returns new_line.
+/*Allocates sufficient space for a copy of 'add[start]' - 'add[stop]' 
+appended at the end of 'base'. Frees 'base' and 'add', and returns new_line.*/
 char	*make_line(char *base, char *add, int start, int stop)
 {
 	char	*new_line;
@@ -44,19 +45,17 @@ char	*make_line(char *base, char *add, int start, int stop)
 	i_new = 0;
 	i_base = 0;
 	while (base[i_base])
-		new_line[i_new] = base[i_base++];
+		new_line[i_new++] = base[i_base++];
 	free(base);
 	while (start < stop)
 		new_line[i_new++] = add[start++];
-	if (add)
-		free(add);
 	new_line[i_new] = '\0';
 	return (new_line);
 }
 
-//Creates make_line from stash.
-//Calls read until an eol is found or read returns 0. 
-//Build next_line and saves, if needed, the unused str in stash.
+/*Creates make_line from stash.
+Calls read until an eol is found or read returns 0. 
+Build next_line and saves, if needed, the unused str in stash.*/
 char	*process_read(int fd, char *next_line, char	**stash)
 {
 	int		eol;
@@ -67,31 +66,43 @@ char	*process_read(int fd, char *next_line, char	**stash)
 	if (eol == -1)
 		next_line = make_line(next_line, *stash, 0, ft_strlen(*stash));
 	else
-		next_line = make_line(next_line, *stash, 0, eol);
-	while (ft_strchr(next_line, '\n') == 0 && read_bytes > 0)
+	{
+		next_line = make_line(next_line, *stash, 0, eol + 1);
+		eol = ft_strchr(*stash, '\n');
+		*stash = make_line(NULL, *stash, eol + 1, ft_strlen(*stash));
+	}
+	read_bytes = 1;
+	while (ft_strchr(next_line, '\n') == -1 && read_bytes > 0)
 	{
 		tmp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 		if (!tmp)
 			return (safe_return(NULL, stash, next_line));
 		read_bytes = read(fd, tmp, BUFFER_SIZE);
-		if (ft_strchr(tmp, '\n') >= 0)
-			*stash = make_line(NULL, tmp, ft_strchr(tmp, '\n'), BUFFER_SIZE);
-		next_line = make_line(next_line, tmp, 0, ft_strlen(tmp));
+		eol = ft_strchr(tmp, '\n');
+		if (eol > -1)
+			*stash = make_line(NULL, tmp, eol + 1, ft_strlen(tmp));
+		else
+			eol = ft_strlen(tmp);
+		next_line = make_line(next_line, tmp, 0, eol + 1);
+		if (read_bytes < BUFFER_SIZE && ft_strchr(*stash, '\n') == -1)
+		{	
+			free (*stash);
+			free (stash);
+		}
 	}
-	if (read_bytes == -1 || (read_bytes == 0 && next_line[0] == 0))
+	if (read_bytes == -1 || (read_bytes == 0 && next_line[0] == '\0'))
 		return (safe_return(NULL, stash, next_line));
 	return (next_line);
 }
 
 char	*get_next_line(int fd)
 {
-	char	*next_line;
-	char	**stash;
+	char		*next_line;
+	static char	**stash;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	stash = get_stash();
-	*stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (stash == NULL || *stash == NULL)
 		return (NULL);
 	next_line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
@@ -105,6 +116,27 @@ int main()
 {
 //norminette !
 	int	fd;
+	char	*line;
 	fd = open("text.txt", O_RDONLY);
-	printf("%s", get_next_line(fd));
+
+	// line = get_next_line(fd);
+	// while (line != NULL)
+	// {
+	// 	printf("%s", line);
+	// 	free(line);
+	// 	line = get_next_line(fd);
+	// }
+	// free (line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free(line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free(line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free(line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free(line);
 }
