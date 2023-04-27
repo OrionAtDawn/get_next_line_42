@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/27 15:03:41 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/27 15:25:36 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,9 @@ char	*process_read(int fd, char *next_line, char	**stash)
 		else
 			eol = ft_strlen(tmp);
 		next_line = make_line(next_line, tmp, 0, eol + 1);
-		if (read_bytes < BUFFER_SIZE && ft_strchr(*stash, '\n') == -1)
-		{	
-			free (*stash);
-			free (stash);
-		}
 	}
+	if (ft_strchr(next_line, '\n') == -1)
+		return (safe_return(next_line, stash, NULL));
 	if (read_bytes == -1 || (read_bytes == 0 && next_line[0] == '\0'))
 		return (safe_return(NULL, stash, next_line));
 	return (next_line);
@@ -119,24 +116,24 @@ int main()
 	char	*line;
 	fd = open("text.txt", O_RDONLY);
 
+	line = get_next_line(fd);
+	while (line != NULL)
+	{
+		printf("%s", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	free (line);
 	// line = get_next_line(fd);
-	// while (line != NULL)
-	// {
-	// 	printf("%s", line);
-	// 	free(line);
-	// 	line = get_next_line(fd);
-	// }
-	// free (line);
-	line = get_next_line(fd);
-	printf("%s", line);
-	free(line);
-	line = get_next_line(fd);
-	printf("%s", line);
-	free(line);
-	line = get_next_line(fd);
-	printf("%s", line);
-	free(line);
-	line = get_next_line(fd);
-	printf("%s", line);
-	free(line);
+	// printf("%s", line);
+	// free(line);
+	// line = get_next_line(fd);
+	// printf("%s", line);
+	// free(line);
+	// line = get_next_line(fd);
+	// printf("%s", line);
+	// free(line);
+	// line = get_next_line(fd);
+	// printf("%s", line);
+	// free(line);
 }
