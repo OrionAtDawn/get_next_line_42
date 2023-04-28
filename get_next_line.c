@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/27 15:25:36 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/28 15:47:12 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,24 +53,37 @@ char	*make_line(char *base, char *add, int start, int stop)
 	return (new_line);
 }
 
+char	**process_stash(char **stash)
+{
+	int		eol;
+	char	*next_line;
+
+	eol = ft_strchr(*stash, '\n');
+	if (eol == -1)
+	{
+		next_line = make_line(NULL, *stash, 0, ft_strlen(*stash));
+		stash[0] = 0;
+	}
+	else
+	{
+		next_line = make_line(NULL, *stash, 0, eol + 1);
+		eol = ft_strchr(*stash, '\n');
+		*stash = make_line(NULL, *stash, eol + 1, ft_strlen(*stash));
+	}
+	return (next_line);
+}
+
 /*Creates make_line from stash.
 Calls read until an eol is found or read returns 0. 
 Build next_line and saves, if needed, the unused str in stash.*/
-char	*process_read(int fd, char *next_line, char	**stash)
+char	*process_read(int fd, char	**stash)
 {
 	int		eol;
 	int		read_bytes;
 	char	*tmp;
+	char	*next_line;
 
-	eol = ft_strchr(*stash, '\n');
-	if (eol == -1)
-		next_line = make_line(next_line, *stash, 0, ft_strlen(*stash));
-	else
-	{
-		next_line = make_line(next_line, *stash, 0, eol + 1);
-		eol = ft_strchr(*stash, '\n');
-		*stash = make_line(NULL, *stash, eol + 1, ft_strlen(*stash));
-	}
+	next_line = process_stash(stash);
 	read_bytes = 1;
 	while (ft_strchr(next_line, '\n') == -1 && read_bytes > 0)
 	{
@@ -84,9 +97,8 @@ char	*process_read(int fd, char *next_line, char	**stash)
 		else
 			eol = ft_strlen(tmp);
 		next_line = make_line(next_line, tmp, 0, eol + 1);
+		free (tmp);
 	}
-	if (ft_strchr(next_line, '\n') == -1)
-		return (safe_return(next_line, stash, NULL));
 	if (read_bytes == -1 || (read_bytes == 0 && next_line[0] == '\0'))
 		return (safe_return(NULL, stash, next_line));
 	return (next_line);
@@ -94,7 +106,6 @@ char	*process_read(int fd, char *next_line, char	**stash)
 
 char	*get_next_line(int fd)
 {
-	char		*next_line;
 	static char	**stash;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -102,8 +113,7 @@ char	*get_next_line(int fd)
 	stash = get_stash();
 	if (stash == NULL || *stash == NULL)
 		return (NULL);
-	next_line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	return (process_read(fd, next_line, stash));
+	return (process_read(fd, stash));
 }
 
 //##################DELETE :####################

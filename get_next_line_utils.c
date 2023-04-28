@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/27 15:13:24 by edufour          ###   ########.fr       */
+/*   Updated: 2023/04/28 15:38:58 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,20 @@ int	ft_strlen(const char *s)
 	while (s[i])
 		i++;
 	return (i);
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	size_t	i;
+
+	if (!s)
+		return ;
+	i = 0;
+	while (i < n)
+	{
+		((char *)s)[i] = 0;
+		i++;
+	}
 }
 
 int	ft_strchr(char *str, char search)
