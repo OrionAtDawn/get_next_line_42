@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/28 15:47:12 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/03 11:42:22 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@ char	**get_stash(void)
 }
 
 /*Allocates sufficient space for a copy of 'add[start]' - 'add[stop]' 
-appended at the end of 'base'. Frees 'base' and 'add', and returns new_line.*/
-char	*make_line(char *base, char *add, int start, int stop)
+appended at the end of 'base'. Frees 'base', and returns new_line.*/
+char	*make_line(char *base, char *add, size_t start, size_t stop)
 {
 	char	*new_line;
-	int		i_base;
-	int		i_add;
-	int		i_new;
+	size_t	i_base;
+	size_t	i_add;
+	size_t	i_new;
 
 	i_base = 0;
 	i_add = stop - start;
@@ -53,7 +53,7 @@ char	*make_line(char *base, char *add, int start, int stop)
 	return (new_line);
 }
 
-char	**process_stash(char **stash)
+char	*process_stash(char **stash)
 {
 	int		eol;
 	char	*next_line;
@@ -62,7 +62,7 @@ char	**process_stash(char **stash)
 	if (eol == -1)
 	{
 		next_line = make_line(NULL, *stash, 0, ft_strlen(*stash));
-		stash[0] = 0;
+		ft_bzero(*stash, ft_strlen(*stash));
 	}
 	else
 	{
@@ -89,7 +89,7 @@ char	*process_read(int fd, char	**stash)
 	{
 		tmp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 		if (!tmp)
-			return (safe_return(NULL, stash, next_line));
+			return (safe_return(NULL, &stash, &next_line));
 		read_bytes = read(fd, tmp, BUFFER_SIZE);
 		eol = ft_strchr(tmp, '\n');
 		if (eol > -1)
@@ -100,7 +100,7 @@ char	*process_read(int fd, char	**stash)
 		free (tmp);
 	}
 	if (read_bytes == -1 || (read_bytes == 0 && next_line[0] == '\0'))
-		return (safe_return(NULL, stash, next_line));
+		return (safe_return(NULL, &stash, &next_line));
 	return (next_line);
 }
 
@@ -116,12 +116,11 @@ char	*get_next_line(int fd)
 	return (process_read(fd, stash));
 }
 
-//##################DELETE :####################
+
 #include <fcntl.h>
 #include <stdio.h>
 int main()
 {
-//norminette !
 	int	fd;
 	char	*line;
 	fd = open("text.txt", O_RDONLY);
@@ -134,16 +133,5 @@ int main()
 		line = get_next_line(fd);
 	}
 	free (line);
-	// line = get_next_line(fd);
-	// printf("%s", line);
-	// free(line);
-	// line = get_next_line(fd);
-	// printf("%s", line);
-	// free(line);
-	// line = get_next_line(fd);
-	// printf("%s", line);
-	// free(line);
-	// line = get_next_line(fd);
-	// printf("%s", line);
-	// free(line);
 }
+

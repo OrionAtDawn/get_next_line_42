@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/04/28 15:38:58 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/03 11:41:43 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_strlen(const char *s)
 {
-	int	i;
+	size_t	i;
 
 	if (!s)
 		return (0);
@@ -40,7 +40,7 @@ void	ft_bzero(void *s, size_t n)
 
 int	ft_strchr(char *str, char search)
 {
-	int	i;
+	size_t	i;
 
 	if (!str)
 		return (0);
@@ -55,35 +55,29 @@ int	ft_strchr(char *str, char search)
 }
 
 //frees, if needed, stash and any given line. Returns 'return_str'
-char	*safe_return(char *return_str, char **free_stash, char *free_line)
+char	*safe_return(char *return_str, char ***free_stash, char **free_line)
 {
+	if (**free_stash)
+		free (**free_stash);
+	**free_stash = NULL;
 	if (*free_stash)
 		free (*free_stash);
 	*free_stash = NULL;
-	if (free_stash)
-		free (free_stash);
-	free_stash = NULL;
-	if (free_line)
-		free (free_line);
-	free_line = NULL;
+	if (*free_line)
+		free (*free_line);
+	*free_line = NULL;
 	return (return_str);
 }
 
-void	*ft_calloc(int nb, int size)
+void	*ft_calloc(size_t nb, size_t size)
 {
 	char	*buffer;
-	int		i;
 
 	if (nb < 0 || size < 0)
 		return (NULL);
 	buffer = malloc (nb * size);
 	if (!buffer)
 		return (NULL);
-	i = 0;
-	while (i < nb * size)
-	{	
-		buffer[i] = 0;
-		i++;
-	}
+	ft_bzero(buffer, nb * size);
 	return (buffer);
 }
