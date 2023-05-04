@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/05/04 14:57:49 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/04 16:11:55 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*read_to_stash(char *stash, int fd)
 	char	*tmp;
 	int		read_bytes;
 
+	if (stash == NULL)
+		stash = ft_calloc(BUFFER_SIZE, sizeof(char));
 	read_bytes = 1;
 	while (ft_strchr(stash, '\n') == -1 && read_bytes > 0)
 	{
@@ -26,13 +28,12 @@ char	*read_to_stash(char *stash, int fd)
 		read_bytes = read(fd, tmp, BUFFER_SIZE);
 		if (read_bytes == -1)
 		{
-			free (tmp);
-			free (stash);
-			stash = NULL;
+			safe_free(&tmp);
+			safe_free(&stash);
 			return (NULL);
 		}
 		stash = ft_strjoin(stash, tmp);
-		free (tmp);
+		safe_free(&tmp);
 	}
 	return (stash);
 }
@@ -71,7 +72,7 @@ char	*keep_in_stash(char *stash)
 	eol = ft_strchr(stash, '\n');
 	if (eol == -1)
 	{
-		free (stash);
+		safe_free(&stash);
 		return (NULL);
 	}
 	eol ++;
@@ -79,7 +80,7 @@ char	*keep_in_stash(char *stash)
 	i = 0;
 	while (stash[eol])
 		new_stash[i++] = stash[eol++];
-	free (stash);
+	safe_free(&stash);
 	return (new_stash);
 }
 
@@ -90,16 +91,12 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (stash == NULL)
-		stash = ft_calloc(BUFFER_SIZE, sizeof(char));
-	if (stash == NULL)
-		return (NULL);
 	stash = read_to_stash(stash, fd);
 	if (stash == NULL)
 		return (NULL);
 	if (stash[0] == 0)
 	{	
-		free(stash);
+		safe_free(&stash);
 		return (NULL);
 	}
 	next_line = stash_to_line(stash);
@@ -113,19 +110,20 @@ char	*get_next_line(int fd)
 // {
 // 	int	fd;
 // 	char	*line;
-// 	fd = open("/Users/edufour/Desktop/42_Projets/get_next_line/42_repo/intra-uuid-57f86113-00e3-4855-b4db-04405e0e327f-4612089-edufour/text.txt", O_RDONLY);
+// 	fd = open("/Users/edufour/Desktop/gnl_elo/text.txt", O_RDONLY);
 // 	// printf("%d", fd);
 
 // 	line = get_next_line(fd);
-// 	// printf("%s", line);
-// 	// free(line);
-// 	// line = get_next_line(fd);
-// 	while (line != NULL)
-// 	{
-// 		printf("%s", line);
-// 		free(line);
-// 		line = get_next_line(fd);
-// 	}
+// 	printf("%s", line);
+// 	free(line);
+// 	line = get_next_line(fd);
+// 	printf("%s", line);
+// 	// while (line != NULL)
+// 	// {
+// 	// 	printf("%s", line);
+// 	// 	free(line);
+// 	// 	line = get_next_line(fd);
+// 	// }
 // 	if (line)
 // 		free (line);
 // }

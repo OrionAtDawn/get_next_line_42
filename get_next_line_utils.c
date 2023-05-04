@@ -6,12 +6,11 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/05/04 13:02:22 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/04 16:12:18 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h> 
-#include <stdlib.h>
+#include "get_next_line.h"
 
 int	ft_strlen(const char *s)
 {
@@ -79,10 +78,20 @@ char	*ft_strjoin(char *base, char *add)
 		return (NULL);
 	while (base[++i_base])
 		new_line[i_base] = base[i_base];
-	free (base);
+	safe_free(&base);
 	base = NULL;
 	while (add[++i_add])
 		new_line[i_base + i_add] = add[i_add];
 	new_line[i_base + i_add] = '\0';
 	return (new_line);
 }
+
+void	safe_free(char	**to_free)
+{
+	if (to_free && *to_free)
+	{
+		free (*to_free);
+		*to_free = NULL;
+	}
+}
+

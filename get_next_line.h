@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 14:04:55 by edufour           #+#    #+#             */
-/*   Updated: 2023/05/04 13:07:44 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/04 16:10:44 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,6 @@ char	*read_to_stash(char *stash, int fd);
 char	*stash_to_line(char *stash);
 char	*keep_in_stash(char *stash);
 char	*get_next_line(int fd);
+void	safe_free(char **to_free);
 
 #endif
