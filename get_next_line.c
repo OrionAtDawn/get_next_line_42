@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/05/04 16:11:55 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/04 16:14:04 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,4 +127,3 @@ char	*get_next_line(int fd)
 // 	if (line)
 // 		free (line);
 // }
-

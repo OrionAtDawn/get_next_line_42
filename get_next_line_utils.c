@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/05/04 16:12:18 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/04 16:13:56 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,3 @@ void	safe_free(char	**to_free)
 		*to_free = NULL;
 	}
 }
-
