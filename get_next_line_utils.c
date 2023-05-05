@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 13:53:01 by edufour           #+#    #+#             */
-/*   Updated: 2023/05/04 16:13:56 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/05 14:14:25 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,27 +70,34 @@ char	*ft_strjoin(char *base, char *add)
 	i_base = -1;
 	i_add = -1;
 	if (!base)
-		base = calloc(1, 1);
+		base = ft_calloc(1, 1);
+	if (!base)
+		return (NULL);
 	if (!add)
 		return (NULL);
 	new_line = malloc(ft_strlen(base) + ft_strlen(add) + 1);
 	if (!new_line)
-		return (NULL);
+		return (safe_free (NULL, &base, NULL));
 	while (base[++i_base])
 		new_line[i_base] = base[i_base];
-	safe_free(&base);
-	base = NULL;
+	safe_free(NULL, &base, NULL);
 	while (add[++i_add])
 		new_line[i_base + i_add] = add[i_add];
 	new_line[i_base + i_add] = '\0';
 	return (new_line);
 }
 
-void	safe_free(char	**to_free)
+char	*safe_free(char *return_value, char **to_free, char **to_free_too)
 {
+	if (to_free_too && *to_free_too)
+	{
+		free (*to_free_too);
+		*to_free_too = NULL;
+	}
 	if (to_free && *to_free)
 	{
 		free (*to_free);
 		*to_free = NULL;
 	}
+	return (return_value);
 }

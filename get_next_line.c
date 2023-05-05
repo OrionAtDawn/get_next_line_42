@@ -6,7 +6,7 @@
 /*   By: edufour <edufour@student.42quebec.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 14:30:41 by edufour           #+#    #+#             */
-/*   Updated: 2023/05/04 16:14:04 by edufour          ###   ########.fr       */
+/*   Updated: 2023/05/05 14:21:09 by edufour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,21 @@ char	*read_to_stash(char *stash, int fd)
 
 	if (stash == NULL)
 		stash = ft_calloc(BUFFER_SIZE, sizeof(char));
+	if (stash == NULL)
+		return (NULL);
 	read_bytes = 1;
 	while (ft_strchr(stash, '\n') == -1 && read_bytes > 0)
 	{
 		tmp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		if (tmp == NULL)
+			return (safe_free(NULL, &stash, NULL));
 		read_bytes = read(fd, tmp, BUFFER_SIZE);
 		if (read_bytes == -1)
-		{
-			safe_free(&tmp);
-			safe_free(&stash);
-			return (NULL);
-		}
+			return (safe_free(NULL, &stash, &tmp));
 		stash = ft_strjoin(stash, tmp);
-		safe_free(&tmp);
+		safe_free(NULL, &tmp, NULL);
+		if (stash == NULL)
+			return (NULL);
 	}
 	return (stash);
 }
@@ -51,6 +53,8 @@ char	*stash_to_line(char *stash)
 	if (eol == -1)
 		return (ft_strjoin(NULL, stash));
 	next_line = ft_calloc(eol + 2, sizeof(char));
+	if (next_line == NULL)
+		return (NULL);
 	i = -1;
 	while (++i <= eol)
 		next_line[i] = stash[i];
@@ -71,17 +75,15 @@ char	*keep_in_stash(char *stash)
 		return (NULL);
 	eol = ft_strchr(stash, '\n');
 	if (eol == -1)
-	{
-		safe_free(&stash);
-		return (NULL);
-	}
+		return (safe_free(NULL, &stash, NULL));
 	eol ++;
 	new_stash = ft_calloc((ft_strlen(stash) - eol) + 1, sizeof(char));
+	if (new_stash == NULL)
+		return (safe_free(NULL, &stash, NULL));
 	i = 0;
 	while (stash[eol])
 		new_stash[i++] = stash[eol++];
-	safe_free(&stash);
-	return (new_stash);
+	return (safe_free(new_stash, &stash, NULL));
 }
 
 char	*get_next_line(int fd)
@@ -95,10 +97,7 @@ char	*get_next_line(int fd)
 	if (stash == NULL)
 		return (NULL);
 	if (stash[0] == 0)
-	{	
-		safe_free(&stash);
-		return (NULL);
-	}
+		return (safe_free(NULL, &stash, NULL));
 	next_line = stash_to_line(stash);
 	stash = keep_in_stash(stash);
 	return (next_line);
